@@ -14,6 +14,17 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    userNameController.dispose();
+    emailController.dispose();
+    mobileNumberController.dispose();
+    passwordController.dispose();
+  }
+
    final _formKey = GlobalKey<FormState>();
   final userNameController = TextEditingController();
   final emailController = TextEditingController();

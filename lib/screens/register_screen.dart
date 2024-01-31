@@ -143,6 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         loading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 1),
           content: Text(
             "Sign-up Successfully",
             style: TextStyle(fontSize: 15,),

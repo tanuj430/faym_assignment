@@ -1,3 +1,4 @@
+
 import 'package:faym_assignment/service/authMethods.dart';
 import 'package:faym_assignment/screen_components/button.dart';
 import 'package:faym_assignment/screen_components/square_button.dart';
@@ -94,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   //Login Button
                   InkWell(
+                    child:MyButton(text: "Sign In",loading: loading,),
                     onTap: () {
                       setState(() {
                         if (_formKey.currentState!.validate()) {
@@ -103,10 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           signIn();
                         }
                       });
-                      signIn();
                     },
-                    child:loading == true ?
-                    CircularProgressIndicator(color: Colors.white): MyButton(text: "Sign In"),
                   ),
 
                   SizedBox(

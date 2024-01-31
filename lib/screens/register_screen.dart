@@ -92,8 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
 
                     },
-                      child:loading == true ?
-                      CircularProgressIndicator(color: Colors.white): MyButton(text: "Register")),
+                      child:MyButton(text: "Register",loading: loading,)),
                   SizedBox(
                     height: 40,
                   ),

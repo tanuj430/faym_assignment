@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
   final String text;
-  const MyButton({super.key,required this.  text});
+  final bool loading;
+  const MyButton({super.key,required this.  text, this.loading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class MyButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           color: Colors.black
         ),
-      child: Text(
+      child: loading?CircularProgressIndicator(color: Colors.white,):Text(
         "$text",
         style: TextStyle(
           fontWeight: FontWeight.w500,

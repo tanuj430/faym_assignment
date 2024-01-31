@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   String email = "", password = "";
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,37 +73,45 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.grey.shade600,
                     ),
                   ),
-                  
-                  SizedBox(height: 10,),
+
+                  SizedBox(
+                    height: 10,
+                  ),
                   //forget password
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text("Forgot password?",style: TextStyle(
-                        color: Colors.black,
-                      ),)
+                      Text(
+                        "Forgot password?",
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(
                     height: 30,
                   ),
                   //Login Button
-                 InkWell(
-                     onTap: (){
-
+                  InkWell(
+                    onTap: () {
                       setState(() {
-                        if(_formKey.currentState!.validate()){
-                            email = emailController.text.toString().trim();
-                            password = passwordController.text.toString().trim();
+                        if (_formKey.currentState!.validate()) {
+                          loading = true;
+                          email = emailController.text.toString().trim();
+                          password = passwordController.text.toString().trim();
+                          signIn();
                         }
                       });
                       signIn();
-                     },
-                     child: MyButton(text:"Sign In"),
-                 ),
+                    },
+                    child:loading == true ?
+                    CircularProgressIndicator(color: Colors.white): MyButton(text: "Sign In"),
+                  ),
 
-
-                  SizedBox(height: 30,),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -110,7 +119,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Colors.grey.shade400,
                         ),
                       ),
-                      Text("Or continue with",style: TextStyle(color: Colors.black54),),
+                      Text(
+                        "Or continue with",
+                        style: TextStyle(color: Colors.black54),
+                      ),
                       Expanded(
                         child: Divider(
                           color: Colors.grey.shade400,
@@ -119,21 +131,38 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
 
-                  SizedBox(height: 30,),
+                  SizedBox(
+                    height: 30,
+                  ),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       //Google Button
                       InkWell(
-                        onTap: (){
-                          AuthMethods().signInWithGoogle(context);
-                        },
-                          child: SquareButton(iconImage:"lib/images/google.png",)),
+                          onTap: () {
+                            AuthMethods().signInWithGoogle(context);
+                          },
+                          child: SquareButton(
+                            iconImage: "lib/images/google.png",
+                          )),
 
-                      SizedBox(width: 30,),
+                      SizedBox(
+                        width: 30,
+                      ),
                       // facebook Button
-                      SquareButton(iconImage: "lib/images/Facebook.png",),
+                      InkWell(
+                        onTap: (){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                "Coming Soon",
+                                style: TextStyle(fontSize: 15,),
+                              )));
+                        },
+                        child: SquareButton(
+                          iconImage: "lib/images/Facebook.png",
+                        ),
+                      ),
                     ],
                   ),
 
@@ -157,9 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextSpan(
                         text: "Register here",
                         style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold
-                        ),
+                            color: Colors.black, fontWeight: FontWeight.bold),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             //Navigate to the register page,
@@ -182,31 +209,31 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void signIn() async {
-    try {
-     UserCredential userCredentials = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((value) {
+          //success code
+      setState(() {
+        loading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-            "Sign-up Successfully",
-            style: TextStyle(fontSize: 20.0),
+        "Sign-up Successfully",
+        style: TextStyle(fontSize: 15,),
+      )));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+    }).catchError((error) {
+      //catch error code here
+      setState(() {
+        loading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "${error}",
+            style: TextStyle(fontSize: 15,),
           )));
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-    } on FirebaseAuthException  catch (e) {
-      if (e.code == 'user-not-found') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.orangeAccent,
-            content: Text(
-              "No User Found for that Email",
-              style: TextStyle(fontSize: 18.0),
-            )));
-      } else if (e.code == 'wrong-password') {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.orangeAccent,
-            content: Text(
-              "Wrong Password Provided by User",
-              style: TextStyle(fontSize: 18.0),
-            )));
-      }
-    }
+    });
   }
 }
+

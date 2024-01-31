@@ -21,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final mobileNumberController = TextEditingController();
 
   String email = "", password = "" , userName = "", mobileNo = "";
+  bool loading = false;
 
 
   @override
@@ -81,15 +82,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onTap: (){
                       if(_formKey.currentState!.validate()){
                         setState(() {
+                          loading = true;
                           email = emailController.text.toString().trim();
                           password = passwordController.text.toString().trim();
                           userName = userNameController.toString().trim();
                           mobileNo = mobileNumberController.text.toString().trim();
+                          registration();
                         });
                       }
-                      registration();
+
                     },
-                      child: MyButton(text: "Register")),
+                      child:loading == true ?
+                      CircularProgressIndicator(color: Colors.white): MyButton(text: "Register")),
                   SizedBox(
                     height: 40,
                   ),
@@ -132,34 +136,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
   void registration() async {
-       try {
-         UserCredential userCredential = await FirebaseAuth.instance
-             .createUserWithEmailAndPassword(email: email, password: password);
-         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-             content: Text(
-               "Registered Successfully",
-               style: TextStyle(fontSize: 20.0),
-             )));
-         // ignore: use_build_context_synchronously
-         Navigator.push(
-             context, MaterialPageRoute(builder: (context) => HomeScreen()));
-       } on FirebaseAuthException catch (e) {
-         if (e.code == 'weak-password') {
-           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-               backgroundColor: Colors.black,
-               content: Text(
-                 "Password Provided is too Weak",
-                 style: TextStyle(fontSize: 18.0),
-               )));
-         } else if (e.code == "email-already-in-use") {
-           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-               backgroundColor: Colors.black,
-               content: Text(
-                 "Account Already exists",
-                 style: TextStyle(fontSize: 18.0),
-               )));
-         }
-       }
+    await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((value) {
+      //success code
+      setState(() {
+        loading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Sign-up Successfully",
+            style: TextStyle(fontSize: 15,),
+          )));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+    }).catchError((error) {
+      //catch error code here
+      setState(() {
+        loading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "${error}",
+            style: TextStyle(fontSize: 15,),
+          )));
+    });
 
    }
 }

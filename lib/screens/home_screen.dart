@@ -12,16 +12,9 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("HomeScreen"),
-            ElevatedButton(
-                onPressed: signOut ,
-                child: Text("SignOut"),
-            ),
           ],
         ),
       )
     );
-  }
-  void signOut()async{
-    await FirebaseAuth.instance.signOut();
   }
 }

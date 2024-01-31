@@ -56,7 +56,7 @@ class MyTextField extends StatelessWidget {
         if (label== 'Email' && !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
           return 'Please enter a valid e-mail';
         }
-        if(label=='Mobile Number' && value!.length < 10 || value!.length > 13){
+        if(label=='Mobile Number' && value!.length < 10 ){
           return 'please enter the valid Mobile Number';
         }
 

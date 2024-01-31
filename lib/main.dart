@@ -1,4 +1,3 @@
-import 'package:faym_assignment/authentication/auth_page.dart';
 import 'package:faym_assignment/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,7 +17,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: AuthPage(),
+        body: LoginScreen(),
       ),
     );
   }
